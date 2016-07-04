@@ -7,18 +7,12 @@
     console.log('ads');
     
     /* jshint -W031 */
-    new Timesheet('timesheet-default', 2002, 2013, [
-      ['2002', '09/2002', 'A freaking awesome time', 'lorem'],
-      ['06/2002', '09/2003', 'Some great memories', 'ipsum'],
-      ['2003', 'Had very bad luck'],
-      ['10/2003', '2006', 'At least had fun', 'dolor'],
-      ['02/2005', '05/2006', 'Enjoyed those times as well', 'ipsum'],
-      ['07/2005', '09/2005', 'Bad luck again', 'default'],
-      ['10/2005', '2008', 'For a long time nothing happened', 'dolor'],
-      ['01/2008', '05/2009', 'LOST Season #4', 'lorem'],
-      ['01/2009', '05/2009', 'LOST Season #4', 'sit'],
-      ['02/2010', '05/2010', 'LOST Season #5', 'lorem'],
-      ['09/2008', '06/2010', 'FRINGE #1 & #2', 'ipsum']
+    new Timesheet('timesheet', 1990, 2016, 600, 2, '-', [
+     ['1990-07-01', '2010-05-31', '1', 'default'],
+     ['2010-06-01', '2013-05-31', '2', 'lorem'],
+     ['2013-06-01', '2014-10-31', '3', 'ipsum'],
+     ['2014-11-01', '2015-09-30', '4', 'dolor'],
+     ['2015-10-01', '2016-09-30', '5', 'sit'],
     ]);
 
     document.querySelector('#switch-dark').addEventListener('click', function() {
