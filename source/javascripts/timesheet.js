@@ -193,24 +193,7 @@
      * Calculate starting offset for bubble
      */
     Bubble.prototype.getStartOffset = function(neededYears, jumpSize) {
-        var nJumps=0;
-        var n=0;
-        var inJump=false;
-
-        for (var i = this.min; i<this.start.getFullYear(); i++) {
-            if (neededYears.contains(i)) {
-                n += 12;
-                inJump=false;
-            }
-            else {
-                if (!inJump)
-                    nJumps++;
-
-                inJump = true;
-            }
-        }
-
-        return (n+this.start.getMonth())/12*this.widthYear+nJumps*jumpSize;
+        return this.getDifferenceDates(new Date(this.min, 0, 1), this.start, neededYears, jumpSize);
     };
 
     /**
@@ -247,17 +230,21 @@
      * Get bubble's width in pixel
      */
     Bubble.prototype.getWidth = function(neededYears, jumpSize) {
+        return this.getDifferenceDates(this.start, this.end, neededYears, jumpSize);
+    };
+
+    Bubble.prototype.getDifferenceDates = function(d1, d2, neededYears, jumpSize){
+        var nJumpedYears = 0;
         var nJumps=0;
-        var n=0;
         var inJump=false;
 
-        if (this.end && this.end.getFullYear()) {
-            for (var i = this.start.getFullYear() + 1; i < this.end.getFullYear(); i++) {
+        if (d2 && d2.getFullYear()) {
+            for (var i = d1.getFullYear() + 1; i < d2.getFullYear(); i++) {
                 if (neededYears.contains(i)) {
-                    n += 12;
                     inJump=false;
                 }
                 else {
+                    nJumpedYears++;
                     if (!inJump)
                         nJumps++;
 
@@ -266,10 +253,28 @@
             }
         }
 
-        if (this.end && this.end.getFullYear()!=null && this.start.getFullYear()!= this.end.getFullYear())
-            return ((12-this.start.getMonth()) + n + this.end.getMonth()+1)/12*this.widthYear+nJumps*jumpSize;
+        if (d2) {
+            // We calculate the difference in years without counting the ones we don't draw
+            var yearsDifference = (d2.getFullYear() - d1.getFullYear() - nJumpedYears);
+            // We calculate the difference in months
+            var monthDifference = d2.getMonth() - d1.getMonth();
+            // We calculate the difference in days
+            var daysDifference = d2.getDate() - d1.getDate();
+
+            // Finally, we calculate the difference in time without taking the skipped years into account
+            var timeDifference = ((daysDifference / 30) + monthDifference) / 12 + yearsDifference;
+
+            // What we return is:
+            // -> Multiplied by the width of a year, the sum of
+            //      -> Difference in years (without the skipped years)
+            //      -> Difference in months (converted to years)
+            //      -> Difference in days (converted to years)
+            // -> Multiplied by the width of a skip
+            //      -> Number of skips done
+            return (timeDifference * this.widthYear) + (nJumps * jumpSize);
+        }
         else
-            return ((12-this.start.getMonth()) + n)/12*this.widthYear+nJumps*jumpSize;
+            return (12-d1.getMonth()-(d1.getDate()/30))/12*this.widthYear+nJumps*jumpSize;
     };
 
     /**
